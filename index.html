@@ -91,7 +91,6 @@
             50% { box-shadow: 0 0 20px 10px rgba(234, 179, 8, 0.2); }
         }
 
-        /* Removido backdrop-filter para evitar el bug gráfico de video negro/oscuro en móviles */
         .modal-overlay {
             background: rgba(15, 23, 42, 0.92);
         }
@@ -262,14 +261,16 @@
             40%, 60% { transform: translate3d(10px, 0, 0); }
         }
 
-        /* Estilo para recortar la barra superior e inferior de comandos de Google Drive */
+        /* Corrección del recorte de comandos de Google Drive para evitar Bug Webkit de oscurecimiento */
         .video-crop-container {
             position: relative;
             width: 100%;
             height: 100%;
             overflow: hidden;
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+            will-change: transform;
         }
-        /*pointer-events: none en el iframe desactiva el hover/clic nativo que causa que aparezcan los controles*/
         .video-crop-container iframe {
             position: absolute;
             top: -56px; /* Recorta la cabecera superior */
@@ -277,7 +278,10 @@
             width: 100%;
             height: calc(100% + 112px); /* Compensa el recorte superior e inferior */
             border: none;
-            pointer-events: none; 
+            pointer-events: auto; /* IMPORTANTE: Mantener en auto para evitar bug de opacidad por inactividad en móviles */
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+            will-change: transform;
         }
     </style>
 </head>
@@ -316,8 +320,8 @@
         <div class="max-w-3xl w-full text-center animate__animated animate__zoomIn flex flex-col items-center p-2 sm:p-4">
             <h3 class="text-lg sm:text-2xl font-bold-game text-white mb-3 sm:mb-4 uppercase px-2 tracking-wide drop-shadow-md">Watch the Intro Quest Video! 🎬</h3>
             
-            <!-- Contenedor del video: Renderizado transparente, flotando sobre el fondo oscuro para evitar solapamientos gráficos en el móvil -->
-            <div class="w-full aspect-video rounded-2xl sm:rounded-3xl overflow-hidden mb-5 sm:mb-6 relative bg-transparent shadow-2xl">
+            <!-- Contenedor del video: Renderizado transparente con capa GPU acelerada para celulares -->
+            <div class="w-full aspect-video rounded-2xl sm:rounded-3xl overflow-hidden mb-5 sm:mb-6 relative bg-transparent shadow-2xl" style="-webkit-transform: translate3d(0,0,0); transform: translate3d(0,0,0); will-change: transform;">
                 <!-- Google Drive Embedded Video Player con máscara para ocultar comandos y controles -->
                 <div class="video-crop-container absolute inset-0">
                     <iframe id="intro-video-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
