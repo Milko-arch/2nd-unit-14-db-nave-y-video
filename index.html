@@ -293,15 +293,15 @@
         </div>
     </div>
 
-    <!-- INTRO VIDEO MODAL -->
-    <div id="video-modal" class="fixed inset-0 z-[250] modal-overlay flex items-center justify-center p-6 hidden">
-        <div class="glass max-w-3xl w-full p-6 text-center animate__animated animate__zoomIn flex flex-col items-center">
-            <h3 class="text-2xl font-bold-game text-indigo-600 mb-4 uppercase">Watch the Intro Quest Video! 🎬</h3>
-            <div class="w-full aspect-video rounded-3xl overflow-hidden border-4 border-indigo-100 shadow-inner mb-6 relative bg-black">
+    <!-- INTRO VIDEO MODAL (OPTIMIZADO PARA CELULAR) -->
+    <div id="video-modal" class="fixed inset-0 z-[250] modal-overlay flex items-center justify-center p-3 sm:p-6 hidden">
+        <div class="glass max-w-3xl w-full p-4 sm:p-6 text-center animate__animated animate__zoomIn flex flex-col items-center">
+            <h3 class="text-lg sm:text-2xl font-bold-game text-indigo-600 mb-3 sm:mb-4 uppercase px-2">Watch the Intro Quest Video! 🎬</h3>
+            <div class="w-full aspect-video rounded-2xl sm:rounded-3xl overflow-hidden border-2 sm:border-4 border-indigo-100 shadow-inner mb-4 sm:mb-6 relative bg-black">
                 <!-- Google Drive Embedded Video Player -->
-                <iframe id="intro-video-iframe" class="w-full h-full" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <iframe id="intro-video-iframe" class="w-full h-full absolute inset-0 border-0" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             </div>
-            <button onclick="finishVideoAndGoToMission1()" class="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-bold-game text-xl btn-bounce flex items-center gap-2">
+            <button onclick="finishVideoAndGoToMission1()" class="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-indigo-600 text-white rounded-2xl font-bold-game text-lg sm:text-xl btn-bounce flex items-center justify-center gap-2">
                 CONTINUE TO MISSION 1 🚀
             </button>
         </div>
@@ -726,7 +726,7 @@
         }
         window.addEventListener('DOMContentLoaded', createBackgroundBubbles);
 
-        function showFloatingFeedback() {
+        fontFeedback = function() {
             const feedbackWords = ["AWESOME!", "GREAT!", "SUPER!", "PERFECT!", "NICE!"];
             const text = feedbackWords[Math.floor(Math.random() * feedbackWords.length)];
             const el = document.createElement('div');
@@ -737,6 +737,10 @@
             document.body.appendChild(el);
             triggerHaptic('success');
             setTimeout(() => el.remove(), 1500);
+        }
+        
+        function showFloatingFeedback() {
+            fontFeedback();
         }
 
         // Se mantiene la función tal cual estaba definida originalmente
