@@ -261,6 +261,23 @@
             40%, 60% { transform: translate3d(10px, 0, 0); }
         }
 
+        /* EVITA QUE EL REPRODUCTOR CAIGA POR DEBAJO DE LA ALTURA MÍNIMA EN CELULARES VERTICALES:
+           Google Drive activa un filtro oscuro de advertencia si la altura del iframe cae por debajo de ~250px.
+           Forzamos una altura mínima de 280px para evitar el filtro y escalamos responsivamente en pantallas más grandes.
+        */
+        .video-container-responsive {
+            width: 100%;
+            height: 56vw;
+            min-height: 280px; 
+            max-height: 480px;
+        }
+        @media (min-width: 640px) {
+            .video-container-responsive {
+                height: auto;
+                aspect-ratio: 16 / 9;
+            }
+        }
+
         /* RECORTE Y ZOOM DE IFRAME PARA ELIMINAR CONTROLES Y RECUADROS FÍSICOS:
            Establecemos un margen de recorte óptimo responsivo que elimina completamente las barras
            superior de título e inferior de reproducción de Drive, flotando de forma inmersiva sin ningún "marco".
@@ -335,8 +352,8 @@
         <div class="w-full max-w-none text-center animate__animated animate__zoomIn flex flex-col items-center p-0">
             <h3 class="text-lg sm:text-2xl font-bold-game text-white mb-4 sm:mb-6 uppercase px-4 tracking-wide drop-shadow-md">Watch the Intro Quest Video! 🎬</h3>
             
-            <!-- Contenedor del video: Configurado para ocupar el 100% de la anchura sin recortes ni marcos sombreados -->
-            <div class="w-full aspect-video overflow-hidden mb-6 sm:mb-8 relative bg-transparent" style="-webkit-transform: translate3d(0,0,0); transform: translate3d(0,0,0); will-change: transform;">
+            <!-- Contenedor del video: Configurado para usar el alto mínimo responsivo y evitar el bloqueo de Google Drive -->
+            <div class="video-container-responsive overflow-hidden mb-6 sm:mb-8 relative bg-transparent" style="-webkit-transform: translate3d(0,0,0); transform: translate3d(0,0,0); will-change: transform;">
                 <div class="video-crop-container absolute inset-0">
                     <iframe id="intro-video-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                     <!-- Capa transparente de bloqueo total que impide cualquier interacción directa -->
@@ -491,7 +508,7 @@
     </footer>
 
     <script>
-        const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyAq9DVA2ee7Vtge9vND5PeucQpos_rYbup_nkP4DSvBxAkYmVBDcSeM3FefSy1g9x/exec";
+        const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyAq9DVA2ee7Vtge9vND5PeucQposM_rYbup_nkP4DSvBxAkYmVBDcSeM3FefSy1g9x/exec";
 
         let audioCtx;
         function playClickSound() {
