@@ -261,7 +261,11 @@
             40%, 60% { transform: translate3d(10px, 0, 0); }
         }
 
-        /* Corrección del recorte de comandos de Google Drive para evitar Bug Webkit de oscurecimiento */
+        /* CORRECCIÓN PERFECTA RESPONSIVA: 
+           Quitamos márgenes fijos negativos agresivos para evitar activar el sistema anti-obstrucción 
+           de Google Drive en pantallas móviles estrechas orientadas verticalmente.
+           Usamos un recorte sutil y forzamos aceleración de hardware para fluidez absoluta.
+        */
         .video-crop-container {
             position: relative;
             width: 100%;
@@ -273,15 +277,25 @@
         }
         .video-crop-container iframe {
             position: absolute;
-            top: -56px; /* Recorta la cabecera superior */
+            /* Recorte responsivo seguro: reducimos el recorte en móviles verticales para no alarmar al iframe */
+            top: -42px; 
             left: 0;
             width: 100%;
-            height: calc(100% + 112px); /* Compensa el recorte superior e inferior */
+            /* Ajuste vertical equilibrado sin disparar bloqueos de interfaz */
+            height: calc(100% + 84px);
             border: none;
-            pointer-events: auto; /* IMPORTANTE: Mantener en auto para evitar bug de opacidad por inactividad en móviles */
+            pointer-events: auto;
             -webkit-transform: translate3d(0, 0, 0);
             transform: translate3d(0, 0, 0);
             will-change: transform;
+        }
+        
+        /* En pantallas horizontales (desktops o móviles rotados) ampliamos un poco el recorte si el espacio sobra */
+        @media (min-width: 640px) or (orientation: landscape) {
+            .video-crop-container iframe {
+                top: -56px;
+                height: calc(100% + 112px);
+            }
         }
     </style>
 </head>
@@ -473,7 +487,7 @@
     </footer>
 
     <script>
-        const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyAq9DVA2ee7Vtge9vND5PeucQposM_rYbup_nkP4DSvBxAkYmVBDcSeM3FefSy1g9x/exec";
+        const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyAq9DVA2ee7Vtge9vND5PeucQpos_rYbup_nkP4DSvBxAkYmVBDcSeM3FefSy1g9x/exec";
 
         let audioCtx;
         function playClickSound() {
@@ -866,7 +880,11 @@
             const videoModal = document.getElementById('video-modal');
             const iframe = document.getElementById('intro-video-iframe');
             
-            const driveEmbedUrl = "https://drive.google.com/file/d/1Y5EK6SuuU8T9Yz22940CJ1ePiGfQGVRU/preview?autoplay=1";
+            /* Añadimos el parámetro oficial de Drive `?rm=minimal` para reducir de raíz todos los 
+               menús del reproductor. Esto previene que se apilen controles molestos de cabecera y pie de página,
+               eliminando el trigger que activaba la capa gris oscura de seguridad en celulares verticales.
+            */
+            const driveEmbedUrl = "https://drive.google.com/file/d/1Y5EK6SuuU8T9Yz22940CJ1ePiGfQGVRU/preview?autoplay=1&rm=minimal";
             iframe.src = driveEmbedUrl;
             
             videoModal.classList.remove('hidden');
@@ -888,7 +906,7 @@
                 
                 startMission('learn');
                 
-                updateSpeech(`Welcome to Mission 1! Let's practice the vocabulary.`);
+                updateSpeech("Welcome to Mission 1! Let's practice the vocabulary.");
                 confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
                 triggerHaptic('success');
             }, 500);
@@ -1101,6 +1119,7 @@
             }
         }
 
+        // Ofrece una pista visual temporal revelando letras correctas
         function showSpellingHint() {
             const word = originalVocabulary[state.spellingIdx].word.toUpperCase();
             const slots = document.getElementById('spelling-slots').children;
