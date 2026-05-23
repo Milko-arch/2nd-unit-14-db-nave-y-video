@@ -92,7 +92,7 @@
         }
 
         .modal-overlay {
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(4px);
         }
 
@@ -309,11 +309,13 @@
         </div>
     </div>
 
-    <!-- INTRO VIDEO MODAL (COMPLETAMENTE LIMPIO Y EN PANTALLA COMPLETA) -->
+    <!-- INTRO VIDEO MODAL (COMPLETAMENTE FLOTANTE SIN RECUADRO) -->
     <div id="video-modal" class="fixed inset-0 z-[250] modal-overlay flex items-center justify-center p-3 sm:p-6 hidden">
-        <div class="glass max-w-3xl w-full p-4 sm:p-6 text-center animate__animated animate__zoomIn flex flex-col items-center">
-            <h3 class="text-lg sm:text-2xl font-bold-game text-indigo-600 mb-3 sm:mb-4 uppercase px-2">Watch the Intro Quest Video! 🎬</h3>
-            <div class="w-full aspect-video rounded-2xl sm:rounded-3xl overflow-hidden border-2 sm:border-4 border-indigo-100 shadow-inner mb-4 sm:mb-6 relative bg-black">
+        <div class="max-w-3xl w-full text-center animate__animated animate__zoomIn flex flex-col items-center p-2 sm:p-4">
+            <h3 class="text-lg sm:text-2xl font-bold-game text-white mb-3 sm:mb-4 uppercase px-2 tracking-wide drop-shadow-md">Watch the Intro Quest Video! 🎬</h3>
+            
+            <!-- Contenedor del video sin marcos ni recuadros plomos, flotando sobre el fondo oscuro -->
+            <div class="w-full aspect-video rounded-2xl sm:rounded-3xl overflow-hidden mb-5 sm:mb-6 relative bg-black shadow-2xl">
                 <!-- Google Drive Embedded Video Player con máscara para ocultar comandos y controles -->
                 <div class="video-crop-container absolute inset-0">
                     <iframe id="intro-video-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
@@ -321,7 +323,8 @@
                     <div class="absolute inset-0 bg-transparent z-10"></div>
                 </div>
             </div>
-            <button onclick="finishVideoAndGoToMission1()" class="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-indigo-600 text-white rounded-2xl font-bold-game text-lg sm:text-xl btn-bounce flex items-center justify-center gap-2">
+            
+            <button onclick="finishVideoAndGoToMission1()" class="w-full sm:w-auto px-8 py-3.5 sm:py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold-game text-lg sm:text-xl btn-bounce flex items-center justify-center gap-2 shadow-lg">
                 CONTINUE TO MISSION 1 🚀
             </button>
         </div>
@@ -798,7 +801,7 @@
             { phrase: "🏖️ We love playing on the sunny <span class='highlight-word'>BEACH</span>.", word: "BEACH", emojiPhrase: "🏖️ 🌊 ☀️" },
             { phrase: "🛞 The fast bicycle has a spinning <span class='highlight-word'>WHEEL</span>.", word: "WHEEL", emojiPhrase: "🛞 🚲 💨" },
             { phrase: "🤝 We play together as a friendly <span class='highlight-word'>TEAM</span>.", word: "TEAM", emojiPhrase: "🤝 👥 🏆" },
-            { phrase: "🗣️ Can you <span class='highlight-word'>SPEAK</span> clearly on the microphone?", word: "SPEAK", emojiPhrase: "🗣️ 🎤 📻" },
+            { phrase: "🗣️ Can you <span class='highlight-word'>SPEAK</span> clearly on the microphone?", word: "SPEAK", emojiPhrase: "SPEAK 🎤 📻" },
             { phrase: "🤧 Cover your mouth when you <span class='highlight-word'>SNEEZE</span>.", word: "SNEEZE", emojiPhrase: "🤧 🧻 😷" },
             { phrase: "👥 Many friendly <span class='highlight-word'>PEOPLE</span> live in this city.", word: "PEOPLE", emojiPhrase: "👥 🏙️ 🏠" },
             { phrase: "🍽️ I like to <span class='highlight-word'>EAT</span> healthy fresh food.", word: "EAT", emojiPhrase: "🍽️ 🍎 😋" },
@@ -1284,7 +1287,7 @@
             const w = doc.internal.pageSize.getWidth();
             const h = doc.internal.pageSize.getHeight();
             
-            // Fondo suave y colorido (Lila infantil)
+            // 1. Fondo suave y colorido (Lila infantil)
             doc.setFillColor(245, 243, 255);
             doc.rect(0, 0, w, h, 'F');
 
@@ -1319,7 +1322,7 @@
                 doc.circle(rx, ry, radius, 'F');
             }
             
-            // Tarjeta blanca central del diploma
+            // 2. Tarjeta blanca central del diploma
             doc.setFillColor(255, 255, 255);
             doc.rect(12, 12, w - 24, h - 24, 'F');
 
@@ -1336,7 +1339,7 @@
                 doc.rect(offset, offset, w - (offset * 2), h - (offset * 2));
             });
             
-            // Encabezado con fuentes e iconos infantiles
+            // 3. Encabezado con fuentes e iconos infantiles
             doc.setTextColor(79, 70, 229); // Índigo
             doc.setFont("helvetica", "bold");
             doc.setFontSize(30);
@@ -1357,7 +1360,7 @@
             doc.circle(w/2 - 12, 49, 1.5, 'F');
             doc.circle(w/2 + 12, 49, 1.5, 'F');
             
-            // Caja contenedora para el nombre (Tipo rotulador/resaltador alegre)
+            // 4. Caja contenedora para el nombre (Tipo rotulador/resaltador alegre)
             doc.setFillColor(254, 243, 199); // Amarillo pastel
             doc.rect(35, 70, w - 70, 18, 'F');
             doc.setDrawColor(251, 191, 36);
@@ -1369,7 +1372,7 @@
             doc.setFontSize(32);
             doc.text(name, w/2, 83, { align: 'center' });
             
-            // Textos de logro formativos
+            // 5. Textos de logro formativos
             doc.setTextColor(71, 85, 105);
             doc.setFont("helvetica", "normal");
             doc.setFontSize(13);
@@ -1377,8 +1380,8 @@
             doc.setFont("helvetica", "bold");
             doc.text("NEW VOCABULARY QUEST • SECOND GRADE UNIT 14", w/2, 104, { align: 'center' });
             
-            // Tarjeta de palabras aprendidas
-            doc.setFillColor(248, 250, 252); // Fondo gris claro
+            // 6. Tarjeta contenedora de las palabras aprendidas
+            doc.setFillColor(248, 250, 252); // Fondo gris muy claro
             doc.rect(26, 112, w - 52, 24, 'F');
             doc.setDrawColor(226, 232, 240);
             doc.setLineWidth(1);
@@ -1395,16 +1398,18 @@
             doc.setTextColor(79, 70, 229);
             doc.text(wordsList, w/2, 128, { align: 'center' });
 
-            // Medalla de Oro del Logro
+            // 7. Medalla de Oro del Logro (Sticker vectorial infantil)
+            // Cintas rojas traseras de la medalla
             doc.setFillColor(239, 68, 68); 
             doc.triangle(35, 172, 42, 172, 30, 192, 'F'); // Cinta izquierda
             doc.triangle(55, 172, 48, 172, 60, 192, 'F'); // Cinta derecha
 
+            // Círculo dorado principal de la medalla
             doc.setFillColor(251, 191, 36); 
             doc.circle(45, 166, 14, 'F');
             doc.setDrawColor(245, 158, 11);
             doc.setLineWidth(1.5);
-            doc.circle(45, 166, 11.5); // Borde interno
+            doc.circle(45, 166, 11.5); // Borde interno de la medalla
             
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(11);
@@ -1413,16 +1418,16 @@
             doc.setFontSize(7);
             doc.text("HERO", 45, 172, { align: 'center' });
 
-            // Puntuación Final
+            // Puntuación Final en la esquina central del pie de página
             doc.setTextColor(244, 63, 94); // Rosa/Rojo
             doc.setFontSize(18);
             doc.setFont("helvetica", "bold");
             doc.text(`Final Score: ${score}%`, w/2, 154, { align: 'center' });
             
-            // Firmas de los tutores Leo y Mia
+            // 8. Firmas de los tutores Leo y Mia
             doc.setDrawColor(203, 213, 225);
             doc.setLineWidth(0.5);
-            doc.line(w - 90, 166, w - 40, 166); 
+            doc.line(w - 90, 166, w - 40, 166); // Línea de la firma
 
             doc.setFontSize(9);
             doc.setTextColor(148, 163, 184);
