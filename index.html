@@ -91,9 +91,9 @@
             50% { box-shadow: 0 0 20px 10px rgba(234, 179, 8, 0.2); }
         }
 
+        /* Removido backdrop-filter para evitar el bug gráfico de video negro/oscuro en móviles */
         .modal-overlay {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(4px);
+            background: rgba(15, 23, 42, 0.92);
         }
 
         .sparkle {
@@ -269,13 +269,15 @@
             height: 100%;
             overflow: hidden;
         }
+        /*pointer-events: none en el iframe desactiva el hover/clic nativo que causa que aparezcan los controles*/
         .video-crop-container iframe {
             position: absolute;
             top: -56px; /* Recorta la cabecera superior */
             left: 0;
             width: 100%;
-            height: calc(100% + 112px); /* Compensa el recorte superior e inferior de 56px cada uno */
+            height: calc(100% + 112px); /* Compensa el recorte superior e inferior */
             border: none;
+            pointer-events: none; 
         }
     </style>
 </head>
@@ -309,18 +311,16 @@
         </div>
     </div>
 
-    <!-- INTRO VIDEO MODAL (COMPLETAMENTE FLOTANTE SIN RECUADRO) -->
+    <!-- INTRO VIDEO MODAL (COMPLETAMENTE FLOTANTE SIN RECUADRO Y CORREGIDO PARA MÓVILES) -->
     <div id="video-modal" class="fixed inset-0 z-[250] modal-overlay flex items-center justify-center p-3 sm:p-6 hidden">
         <div class="max-w-3xl w-full text-center animate__animated animate__zoomIn flex flex-col items-center p-2 sm:p-4">
             <h3 class="text-lg sm:text-2xl font-bold-game text-white mb-3 sm:mb-4 uppercase px-2 tracking-wide drop-shadow-md">Watch the Intro Quest Video! 🎬</h3>
             
-            <!-- Contenedor del video sin marcos ni recuadros plomos, flotando sobre el fondo oscuro -->
-            <div class="w-full aspect-video rounded-2xl sm:rounded-3xl overflow-hidden mb-5 sm:mb-6 relative bg-black shadow-2xl">
+            <!-- Contenedor del video: Renderizado transparente, flotando sobre el fondo oscuro para evitar solapamientos gráficos en el móvil -->
+            <div class="w-full aspect-video rounded-2xl sm:rounded-3xl overflow-hidden mb-5 sm:mb-6 relative bg-transparent shadow-2xl">
                 <!-- Google Drive Embedded Video Player con máscara para ocultar comandos y controles -->
                 <div class="video-crop-container absolute inset-0">
                     <iframe id="intro-video-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                    <!-- Capa invisible protectora que bloquea los clics/hover dentro del iframe para que no aparezca ningún control -->
-                    <div class="absolute inset-0 bg-transparent z-10"></div>
                 </div>
             </div>
             
@@ -553,7 +553,6 @@
                     const t = now + (i * 0.25);
                     const glitchOsc = audioCtx.createOscillator();
                     const glitchGain = audioCtx.createGain();
-                    glitchOsc.connect(glitchGain);
                     glitchGain.connect(audioCtx.destination);
                     
                     glitchOsc.type = 'square';
