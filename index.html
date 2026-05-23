@@ -261,41 +261,42 @@
             40%, 60% { transform: translate3d(10px, 0, 0); }
         }
 
-        /* CORRECCIÓN PERFECTA RESPONSIVA: 
-           Quitamos márgenes fijos negativos agresivos para evitar activar el sistema anti-obstrucción 
-           de Google Drive en pantallas móviles estrechas orientadas verticalmente.
-           Usamos un recorte sutil y forzamos aceleración de hardware para fluidez absoluta.
+        /* RECORTE Y ZOOM DE IFRAME PARA ELIMINAR CONTROLES Y RECUADROS FÍSICOS:
+           Establecemos un margen de recorte óptimo responsivo que elimina completamente las barras
+           superior de título e inferior de reproducción de Drive, flotando de forma inmersiva sin ningún "marco".
         */
         .video-crop-container {
             position: relative;
             width: 100%;
             height: 100%;
             overflow: hidden;
+            background: #000;
+            border-radius: inherit;
             -webkit-transform: translate3d(0, 0, 0);
             transform: translate3d(0, 0, 0);
             will-change: transform;
         }
         .video-crop-container iframe {
             position: absolute;
-            /* Recorte responsivo seguro: reducimos el recorte en móviles verticales para no alarmar al iframe */
-            top: -42px; 
-            left: 0;
-            width: 100%;
-            /* Ajuste vertical equilibrado sin disparar bloqueos de interfaz */
-            height: calc(100% + 84px);
+            top: -14%; /* Recorta la barra superior de Drive de manera adaptativa */
+            left: -8%; /* Recorta los costados para eliminar botones laterales y centrar */
+            width: 116%;
+            height: 128%; /* Incremento de alto proporcional para compensar los recortes */
             border: none;
-            pointer-events: auto;
+            pointer-events: none; /* Deshabilita cualquier interacción directa que pudiera activar el hover de controles */
             -webkit-transform: translate3d(0, 0, 0);
             transform: translate3d(0, 0, 0);
             will-change: transform;
         }
-        
-        /* En pantallas horizontales (desktops o móviles rotados) ampliamos un poco el recorte si el espacio sobra */
-        @media (min-width: 640px) or (orientation: landscape) {
-            .video-crop-container iframe {
-                top: -56px;
-                height: calc(100% + 112px);
-            }
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: 30;
+            pointer-events: auto; /* Capa protectora táctil/clic para impedir la aparición de controles flotantes */
         }
     </style>
 </head>
@@ -329,22 +330,25 @@
         </div>
     </div>
 
-    <!-- INTRO VIDEO MODAL (COMPLETAMENTE FLOTANTE SIN RECUADRO Y CORREGIDO PARA MÓVILES) -->
-    <div id="video-modal" class="fixed inset-0 z-[250] modal-overlay flex items-center justify-center p-3 sm:p-6 hidden">
-        <div class="max-w-3xl w-full text-center animate__animated animate__zoomIn flex flex-col items-center p-2 sm:p-4">
-            <h3 class="text-lg sm:text-2xl font-bold-game text-white mb-3 sm:mb-4 uppercase px-2 tracking-wide drop-shadow-md">Watch the Intro Quest Video! 🎬</h3>
+    <!-- INTRO VIDEO MODAL (COMPLETAMENTE FLOTANTE, SIN CONTROLES, SIN RECUADRO Y A ANCHO COMPLETO) -->
+    <div id="video-modal" class="fixed inset-0 z-[250] modal-overlay flex items-center justify-center p-0 hidden">
+        <div class="w-full max-w-none text-center animate__animated animate__zoomIn flex flex-col items-center p-0">
+            <h3 class="text-lg sm:text-2xl font-bold-game text-white mb-4 sm:mb-6 uppercase px-4 tracking-wide drop-shadow-md">Watch the Intro Quest Video! 🎬</h3>
             
-            <!-- Contenedor del video: Renderizado transparente con capa GPU acelerada para celulares -->
-            <div class="w-full aspect-video rounded-2xl sm:rounded-3xl overflow-hidden mb-5 sm:mb-6 relative bg-transparent shadow-2xl" style="-webkit-transform: translate3d(0,0,0); transform: translate3d(0,0,0); will-change: transform;">
-                <!-- Google Drive Embedded Video Player con máscara para ocultar comandos y controles -->
+            <!-- Contenedor del video: Configurado para ocupar el 100% de la anchura sin recortes ni marcos sombreados -->
+            <div class="w-full aspect-video overflow-hidden mb-6 sm:mb-8 relative bg-transparent" style="-webkit-transform: translate3d(0,0,0); transform: translate3d(0,0,0); will-change: transform;">
                 <div class="video-crop-container absolute inset-0">
                     <iframe id="intro-video-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    <!-- Capa transparente de bloqueo total que impide cualquier interacción directa -->
+                    <div class="video-overlay"></div>
                 </div>
             </div>
             
-            <button onclick="finishVideoAndGoToMission1()" class="w-full sm:w-auto px-8 py-3.5 sm:py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold-game text-lg sm:text-xl btn-bounce flex items-center justify-center gap-2 shadow-lg">
-                CONTINUE TO MISSION 1 🚀
-            </button>
+            <div class="px-4 w-full flex justify-center">
+                <button onclick="finishVideoAndGoToMission1()" class="w-full sm:w-auto px-10 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold-game text-lg sm:text-xl btn-bounce flex items-center justify-center gap-2 shadow-lg">
+                    CONTINUE TO MISSION 1 🚀
+                </button>
+            </div>
         </div>
     </div>
 
@@ -880,15 +884,11 @@
             const videoModal = document.getElementById('video-modal');
             const iframe = document.getElementById('intro-video-iframe');
             
-            /* Añadimos el parámetro oficial de Drive `?rm=minimal` para reducir de raíz todos los 
-               menús del reproductor. Esto previene que se apilen controles molestos de cabecera y pie de página,
-               eliminando el trigger que activaba la capa gris oscura de seguridad en celulares verticales.
-            */
             const driveEmbedUrl = "https://drive.google.com/file/d/1Y5EK6SuuU8T9Yz22940CJ1ePiGfQGVRU/preview?autoplay=1&rm=minimal";
             iframe.src = driveEmbedUrl;
             
             videoModal.classList.remove('hidden');
-            updateSpeech(`Awesome! Let's watch this quick video before we begin.`);
+            updateSpeech("Awesome! Let's watch this quick video before we begin.");
             triggerHaptic('success');
         }
 
@@ -896,7 +896,7 @@
             const videoModal = document.getElementById('video-modal');
             const iframe = document.getElementById('intro-video-iframe');
             
-            iframe.src = "";
+            iframe.src = ""; // Detenemos la reproducción del iframe
             videoModal.classList.add('hidden');
             
             document.getElementById('onboarding').classList.add('animate__animated', 'animate__fadeOutUp');
