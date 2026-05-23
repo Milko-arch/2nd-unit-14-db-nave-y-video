@@ -14,7 +14,7 @@
             --p-color: #6366f1;
             --s-color: #f43f5e;
             --bg-color: #f5f3ff;
-            /* Chocolate Palette */
+            /* Paleta Chocolate */
             --choco-dark: #3e2723;
             --choco-mid: #5d4037;
             --choco-light: #8d6e63;
@@ -223,7 +223,7 @@
             text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
         }
 
-        /* Orange Onboarding Style */
+        /* Estilo Onboarding Naranja */
         #onboarding {
             background: radial-gradient(circle at center, #ea580c 0%, #7c2d12 100%);
             box-shadow: inset 0 0 100px rgba(0,0,0,0.5);
@@ -261,6 +261,22 @@
             30%, 50%, 70% { transform: translate3d(-10px, 0, 0); }
             40%, 60% { transform: translate3d(10px, 0, 0); }
         }
+
+        /* Estilo para recortar la barra superior e inferior de comandos de Google Drive */
+        .video-crop-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .video-crop-container iframe {
+            position: absolute;
+            top: -56px; /* Recorta la cabecera superior */
+            left: 0;
+            width: 100%;
+            height: calc(100% + 112px); /* Compensa el recorte superior e inferior de 56px cada uno */
+            border: none;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -293,13 +309,17 @@
         </div>
     </div>
 
-    <!-- INTRO VIDEO MODAL (OPTIMIZADO PARA CELULAR) -->
+    <!-- INTRO VIDEO MODAL (COMPLETAMENTE LIMPIO Y EN PANTALLA COMPLETA) -->
     <div id="video-modal" class="fixed inset-0 z-[250] modal-overlay flex items-center justify-center p-3 sm:p-6 hidden">
         <div class="glass max-w-3xl w-full p-4 sm:p-6 text-center animate__animated animate__zoomIn flex flex-col items-center">
             <h3 class="text-lg sm:text-2xl font-bold-game text-indigo-600 mb-3 sm:mb-4 uppercase px-2">Watch the Intro Quest Video! 🎬</h3>
             <div class="w-full aspect-video rounded-2xl sm:rounded-3xl overflow-hidden border-2 sm:border-4 border-indigo-100 shadow-inner mb-4 sm:mb-6 relative bg-black">
-                <!-- Google Drive Embedded Video Player -->
-                <iframe id="intro-video-iframe" class="w-full h-full absolute inset-0 border-0" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <!-- Google Drive Embedded Video Player con máscara para ocultar comandos y controles -->
+                <div class="video-crop-container absolute inset-0">
+                    <iframe id="intro-video-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    <!-- Capa invisible protectora que bloquea los clics/hover dentro del iframe para que no aparezca ningún control -->
+                    <div class="absolute inset-0 bg-transparent z-10"></div>
+                </div>
             </div>
             <button onclick="finishVideoAndGoToMission1()" class="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-indigo-600 text-white rounded-2xl font-bold-game text-lg sm:text-xl btn-bounce flex items-center justify-center gap-2">
                 CONTINUE TO MISSION 1 🚀
@@ -357,7 +377,7 @@
 
     <main id="game-container" class="flex-grow pt-24 pb-32 px-4 transition-all duration-500 opacity-0 flex flex-col">
         
-        <!-- MISSION MAP -->
+        <!-- MAPA DE MISIONES -->
         <section id="map-section" class="max-w-md mx-auto relative h-[80vh] w-full flex flex-col items-center justify-around">
             <div class="absolute inset-0 flex justify-center -z-10">
                 <svg width="100" height="100%" class="opacity-20">
@@ -467,7 +487,7 @@
             } catch(e) {}
         }
 
-        // Se mantiene la función tal cual estaba definida originalmente
+        // Reproduce sonido cósmico ascendente de éxito del ovni
         function playUFOSuccessSound() {
             try {
                 if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -475,7 +495,6 @@
                 
                 const now = audioCtx.currentTime;
                 
-                // Sirenas / Motores ascendentes
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.connect(gain);
@@ -491,7 +510,6 @@
                 osc.start(now);
                 osc.stop(now + 2.5);
 
-                // Modulación LFO
                 const lfo = audioCtx.createOscillator();
                 const lfoGain = audioCtx.createGain();
                 lfo.frequency.value = 15;
@@ -505,7 +523,7 @@
             } catch(e) {}
         }
 
-        // Se mantiene la función tal cual estaba definida originalmente
+        // Reproduce sonido de motor fallando y posterior explosión para el ovni estrellado
         function playUFOCrashSound() {
             try {
                 if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -513,7 +531,6 @@
                 
                 const now = audioCtx.currentTime;
                 
-                // Motor fallando cayendo en tono
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.connect(gain);
@@ -529,7 +546,6 @@
                 osc.start(now);
                 osc.stop(now + 1.5);
                 
-                // Beeps distorsionados de alarma
                 for(let i=0; i<6; i++) {
                     const t = now + (i * 0.25);
                     const glitchOsc = audioCtx.createOscillator();
@@ -547,7 +563,6 @@
                     glitchOsc.stop(t + 0.15);
                 }
 
-                // Explosión al colisionar
                 setTimeout(() => {
                     const noiseNode = audioCtx.createBufferSource();
                     const bufferSize = audioCtx.sampleRate * 1.5;
@@ -577,7 +592,7 @@
             } catch(e) {}
         }
 
-        // Se mantiene la función tal cual estaba definida originalmente
+        // Ejecuta la animación del platillo volador éxito/derrota
         function runUFOAnimation(isSuccess) {
             const existing = document.getElementById('ufo-anim-container');
             if (existing) existing.remove();
@@ -604,7 +619,6 @@
                 ufo.style.animation = 'ufoFlySuccess 3s cubic-bezier(0.25, 1, 0.5, 1) forwards';
                 container.appendChild(ufo);
                 
-                // Creación de estrellas cósmicas de estela
                 const trailInterval = setInterval(() => {
                     const rect = ufo.getBoundingClientRect();
                     if (rect.top < -50 || rect.left > window.innerWidth + 50) {
@@ -633,7 +647,6 @@
                 ufo.style.animation = 'ufoCrashErratic 1.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards';
                 container.appendChild(ufo);
 
-                // Explosión al llegar al centro
                 setTimeout(() => {
                     document.body.classList.add('animate-shake');
                     setTimeout(() => document.body.classList.remove('animate-shake'), 1000);
@@ -651,7 +664,6 @@
 
                     ufo.style.display = 'none';
 
-                    // Humo y fuego
                     for (let i = 0; i < 20; i++) {
                         const smoke = document.createElement('div');
                         smoke.innerText = Math.random() > 0.5 ? '🔥' : '💨';
@@ -680,7 +692,7 @@
             }
         }
 
-        // Se mantiene la función tal cual estaba definida originalmente
+        // Vibración háptica adaptativa para dispositivos móviles
         function triggerHaptic(type = 'click') {
             if (!navigator.vibrate) return;
             try {
@@ -743,7 +755,7 @@
             fontFeedback();
         }
 
-        // Se mantiene la función tal cual estaba definida originalmente
+        // Muestra indicador flotante al encadenar respuestas correctas consecutivas
         function showComboFeedback(streak) {
             const el = document.createElement('div');
             el.className = 'fixed top-[20%] left-1/2 -translate-x-1/2 font-bold-game text-6xl text-orange-500 z-[9999] pointer-events-none animate__animated animate__tada';
@@ -757,7 +769,6 @@
             }, 1500);
         }
 
-        // Nueva lista de vocabulario estructurada y mapeada con iconos infantiles
         const originalVocabulary = [
             { word: 'FREE', icon: '🎁' },
             { word: 'EACH', icon: '🍎' },
@@ -777,7 +788,6 @@
             { word: 'REASON', icon: '💡' }
         ];
 
-        // Nuevas oraciones de ejemplo y asociaciones de emojis adaptadas
         const phrasesData = [
             { phrase: "🎁 The toy is completely <span class='highlight-word'>FREE</span> for you.", word: "FREE", emojiPhrase: "🎁 🧸 🆓" },
             { phrase: "🍎 <span class='highlight-word'>EACH</span> children gets a red apple.", word: "EACH", emojiPhrase: "🍎 👧 👦" },
@@ -835,7 +845,6 @@
             }
             state.studentName = inputName;
             
-            // Colocamos el nombre de usuario al lado del icono de la casa
             const hudUsername = document.getElementById('hud-username');
             if (hudUsername) {
                 hudUsername.innerText = inputName;
@@ -844,7 +853,6 @@
 
             document.getElementById('name-modal').classList.add('hidden');
             
-            // Mostrar ventana modal del video de forma inmediata
             showIntroVideo();
         }
 
@@ -852,7 +860,6 @@
             const videoModal = document.getElementById('video-modal');
             const iframe = document.getElementById('intro-video-iframe');
             
-            // Conversión de enlace estándar a visor interactivo de Google Drive con reproducción automática
             const driveEmbedUrl = "https://drive.google.com/file/d/1Y5EK6SuuU8T9Yz22940CJ1ePiGfQGVRU/preview?autoplay=1";
             iframe.src = driveEmbedUrl;
             
@@ -865,17 +872,14 @@
             const videoModal = document.getElementById('video-modal');
             const iframe = document.getElementById('intro-video-iframe');
             
-            // Limpiar src para detener reproducción fantasma de fondo
             iframe.src = "";
             videoModal.classList.add('hidden');
             
-            // Desvanecer el panel inicial de Onboarding
             document.getElementById('onboarding').classList.add('animate__animated', 'animate__fadeOutUp');
             setTimeout(() => {
                 document.getElementById('onboarding').classList.add('hidden');
                 document.getElementById('game-container').classList.remove('opacity-0');
                 
-                // Iniciar directamente la Misión 1 (Learn Vocabulary)
                 startMission('learn');
                 
                 updateSpeech(`Welcome to Mission 1! Let's practice the vocabulary.`);
@@ -902,7 +906,6 @@
             speechSynthesis.speak(utter);
         }
 
-        // Se mantiene la función tal cual estaba definida originalmente
         function playPhrase(text) {
             speechSynthesis.cancel();
             const cleanText = text.replace(/<[^>]*>/g, '').replace(/[^\w\s\?!\.,']/g, '');
@@ -1281,7 +1284,7 @@
             const w = doc.internal.pageSize.getWidth();
             const h = doc.internal.pageSize.getHeight();
             
-            // 1. Fondo suave y colorido (Lila infantil)
+            // Fondo suave y colorido (Lila infantil)
             doc.setFillColor(245, 243, 255);
             doc.rect(0, 0, w, h, 'F');
 
@@ -1316,7 +1319,7 @@
                 doc.circle(rx, ry, radius, 'F');
             }
             
-            // 2. Tarjeta blanca central del diploma
+            // Tarjeta blanca central del diploma
             doc.setFillColor(255, 255, 255);
             doc.rect(12, 12, w - 24, h - 24, 'F');
 
@@ -1333,7 +1336,7 @@
                 doc.rect(offset, offset, w - (offset * 2), h - (offset * 2));
             });
             
-            // 3. Encabezado con fuentes e iconos infantiles
+            // Encabezado con fuentes e iconos infantiles
             doc.setTextColor(79, 70, 229); // Índigo
             doc.setFont("helvetica", "bold");
             doc.setFontSize(30);
@@ -1354,7 +1357,7 @@
             doc.circle(w/2 - 12, 49, 1.5, 'F');
             doc.circle(w/2 + 12, 49, 1.5, 'F');
             
-            // 4. Caja contenedora para el nombre (Tipo rotulador/resaltador alegre)
+            // Caja contenedora para el nombre (Tipo rotulador/resaltador alegre)
             doc.setFillColor(254, 243, 199); // Amarillo pastel
             doc.rect(35, 70, w - 70, 18, 'F');
             doc.setDrawColor(251, 191, 36);
@@ -1366,7 +1369,7 @@
             doc.setFontSize(32);
             doc.text(name, w/2, 83, { align: 'center' });
             
-            // 5. Textos de logro formativos
+            // Textos de logro formativos
             doc.setTextColor(71, 85, 105);
             doc.setFont("helvetica", "normal");
             doc.setFontSize(13);
@@ -1374,8 +1377,8 @@
             doc.setFont("helvetica", "bold");
             doc.text("NEW VOCABULARY QUEST • SECOND GRADE UNIT 14", w/2, 104, { align: 'center' });
             
-            // 6. Tarjeta contenedora de las palabras aprendidas
-            doc.setFillColor(248, 250, 252); // Fondo gris muy claro
+            // Tarjeta de palabras aprendidas
+            doc.setFillColor(248, 250, 252); // Fondo gris claro
             doc.rect(26, 112, w - 52, 24, 'F');
             doc.setDrawColor(226, 232, 240);
             doc.setLineWidth(1);
@@ -1392,18 +1395,16 @@
             doc.setTextColor(79, 70, 229);
             doc.text(wordsList, w/2, 128, { align: 'center' });
 
-            // 7. Medalla de Oro del Logro (Sticker vectorial infantil)
-            // Cintas rojas traseras de la medalla
+            // Medalla de Oro del Logro
             doc.setFillColor(239, 68, 68); 
             doc.triangle(35, 172, 42, 172, 30, 192, 'F'); // Cinta izquierda
             doc.triangle(55, 172, 48, 172, 60, 192, 'F'); // Cinta derecha
 
-            // Círculo dorado principal de la medalla
             doc.setFillColor(251, 191, 36); 
             doc.circle(45, 166, 14, 'F');
             doc.setDrawColor(245, 158, 11);
             doc.setLineWidth(1.5);
-            doc.circle(45, 166, 11.5); // Borde interno de la medalla
+            doc.circle(45, 166, 11.5); // Borde interno
             
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(11);
@@ -1412,16 +1413,16 @@
             doc.setFontSize(7);
             doc.text("HERO", 45, 172, { align: 'center' });
 
-            // Puntuación Final en la esquina central del pie de página
+            // Puntuación Final
             doc.setTextColor(244, 63, 94); // Rosa/Rojo
             doc.setFontSize(18);
             doc.setFont("helvetica", "bold");
             doc.text(`Final Score: ${score}%`, w/2, 154, { align: 'center' });
             
-            // 8. Firmas de los tutores Leo y Mia
+            // Firmas de los tutores Leo y Mia
             doc.setDrawColor(203, 213, 225);
             doc.setLineWidth(0.5);
-            doc.line(w - 90, 166, w - 40, 166); // Línea de la firma
+            doc.line(w - 90, 166, w - 40, 166); 
 
             doc.setFontSize(9);
             doc.setTextColor(148, 163, 184);
