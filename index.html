@@ -859,11 +859,11 @@
             const videoModal = document.getElementById('video-modal');
             const iframe = document.getElementById('intro-video-iframe');
             
-            /* SOLUCIÓN AL APUNTAR A GOOGLE DRIVE DIRECTAMENTE:
-               - En lugar de YouTube, cargamos tu video directamente desde Google Drive de forma nativa.
-               - El endpoint `/preview` garantiza que se renderice el player de video universal de Google Drive sin errores de CORS ni bloqueos 153.
+            /* SOLUCIÓN DE REPRODUCCIÓN AUTOMÁTICA EN GOOGLE DRIVE:
+               - Añadimos la directiva oficial '?autoplay=1' al final del enlace del reproductor de Drive para forzar la auto-ejecución inmediata.
+               - Como el usuario acaba de interactuar (hacer clic al botón del modal), los navegadores web permitirán la reproducción con sonido.
             */
-            const driveEmbedUrl = "https://drive.google.com/file/d/1Y5EK6SuuU8T9Yz22940CJ1ePiGfQGVRU/preview";
+            const driveEmbedUrl = "https://drive.google.com/file/d/1Y5EK6SuuU8T9Yz22940CJ1ePiGfQGVRU/preview?autoplay=1";
             iframe.src = driveEmbedUrl;
             
             videoModal.classList.remove('hidden');
